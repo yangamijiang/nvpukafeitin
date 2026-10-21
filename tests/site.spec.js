@@ -1,0 +1,30 @@
+import { test, expect } from '@playwright/test';
+test('desktop menu, favorites, details and demo reservation',async({page})=>{
+ const errors=[];page.on('pageerror',error=>errors.push(error.message));
+ await page.setViewportSize({width:1440,height:1000});await page.goto('/');
+ await expect(page.locator('.hero h1')).toContainText('心动魔法');
+ await expect(page.locator('.menu-card')).toHaveCount(4);
+ await expect(page.locator('.hero-image')).toBeVisible();
+ expect(await page.locator('.hero-image').evaluate(img=>img.complete&&img.naturalWidth>0)).toBeTruthy();
+ await page.getByRole('tab',{name:'治愈饮品'}).click();await expect(page.locator('.menu-card')).toHaveCount(1);await expect(page.locator('.menu-card h3')).toHaveText('萌萌喵爪拿铁');
+ await page.locator('.food-like').click();await expect(page.locator('.food-like')).toHaveAttribute('aria-pressed','true');
+ await page.getByRole('tab',{name:'甜蜜甜点'}).click();await expect(page.locator('.menu-card')).toHaveCount(2);
+ await page.getByRole('tab',{name:'治愈饮品'}).click();await expect(page.locator('.food-like')).toHaveAttribute('aria-pressed','true');
+ await page.getByRole('button',{name:'了解更多'}).click();await expect(page.locator('#detail-dialog')).toBeVisible();await expect(page.locator('#detail-content')).toContainText('咖啡因');
+ await page.getByRole('button',{name:'预约来店品尝'}).click();await expect(page.locator('#reservation-dialog')).toBeVisible();
+ await page.getByLabel('怎么称呼你').fill('小林');
+ const d=new Date();d.setDate(d.getDate()+1);while(d.getDay()!==2)d.setDate(d.getDate()+1);const fmt=x=>`${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`;
+ await page.getByLabel('到店日期').fill(fmt(d));await page.getByLabel('到店时间').selectOption('15:00');await page.getByRole('button',{name:'生成预约计划'}).click();await expect(page.locator('.form-error')).toContainText('店休日');
+ d.setDate(d.getDate()+1);await page.getByLabel('到店日期').fill(fmt(d));await page.getByRole('button',{name:'生成预约计划'}).click();await expect(page.locator('#reservation-summary')).toContainText('小林');await expect(page.locator('#reservation-success')).toContainText('尚未向门店预订');
+ await page.getByRole('button',{name:'期待与你相见'}).click();await expect(page.locator('#reservation-dialog')).not.toBeVisible();
+ await page.locator('[data-news="spring"]').click();await expect(page.locator('#detail-content')).toContainText('樱花');await page.keyboard.press('Escape');
+ await page.getByRole('tab',{name:'人气推荐'}).click();await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:'/tmp/komorebi-desktop.png',fullPage:true});expect(errors).toEqual([]);
+});
+test('mobile layout and navigation',async({page})=>{
+ await page.setViewportSize({width:390,height:844});await page.goto('/');
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBeTruthy();
+ await page.getByRole('button',{name:'打开导航'}).click();await expect(page.locator('nav')).toBeVisible();await page.locator('nav a[href="#menu"]').click();await expect(page.locator('nav')).not.toBeVisible();
+ await page.getByRole('tab',{name:'元气主食'}).click();await expect(page.locator('.menu-card h3')).toHaveText('心动魔法蛋包饭');
+ await page.locator('.hero .reserve').click();await expect(page.locator('#reservation-dialog')).toBeVisible();await page.keyboard.press('Escape');await expect(page.locator('#reservation-dialog')).not.toBeVisible();
+ await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:'/tmp/komorebi-mobile.png',fullPage:true});
+});

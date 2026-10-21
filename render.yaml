@@ -1,0 +1,26 @@
+# This configuration uses a paid persistent disk. Review pricing before deploying.
+services:
+  - type: web
+    name: komorebi-cafe
+    runtime: node
+    plan: starter
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 24.13.0
+      - key: NODE_ENV
+        value: production
+      - key: APP_ORIGIN
+        sync: false
+      - key: DATABASE_PATH
+        value: /var/data/komorebi.sqlite
+      - key: ADMIN_SETUP_KEY
+        generateValue: true
+      - key: TRUST_PROXY
+        value: 1
+    disk:
+      name: komorebi-data
+      mountPath: /var/data
+      sizeGB: 1

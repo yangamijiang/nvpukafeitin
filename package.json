@@ -1,0 +1,36 @@
+{
+  "name": "komorebi-maid-cafe",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "node server/dev.js",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "test": "playwright test",
+    "start": "node server/index.js",
+    "test:api": "node --test tests/api.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yangamijiang/nvpukafeitin.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/yangamijiang/nvpukafeitin/issues"
+  },
+  "homepage": "https://github.com/yangamijiang/nvpukafeitin#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "vite": "^8.3.4"
+  },
+  "private": true,
+  "dependencies": {
+    "express": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  }
+}
