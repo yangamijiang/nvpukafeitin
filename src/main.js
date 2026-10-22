@@ -1,6 +1,7 @@
 import './style.css';
 import { defaultContent, escapeHtml as esc } from '../shared/content.js';
 import { initAccounts } from './accounts.js';
+import { initPixelGame } from './game.js';
 let siteContent = structuredClone(defaultContent);
 
 const strawberry = (x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M-15 0Q-19 11 0 29Q20 10 15 0Q0-10-15 0" fill="#d86d74"/><path d="M0 0L-14-7-5-6 0-14 5-6 14-7 7 2Z" fill="#79926b"/><g fill="#ffe5bd"><ellipse cx="-8" cy="7" rx="1" ry="2"/><ellipse cx="5" cy="8" rx="1" ry="2"/><ellipse cx="-2" cy="16" rx="1" ry="2"/><ellipse cx="8" cy="17" rx="1" ry="2"/></g></g>`;
@@ -43,3 +44,4 @@ const toggle=document.querySelector('.mobile-toggle');const nav=document.querySe
 const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){nav.querySelectorAll('a').forEach(a=>a.classList.toggle('active',a.getAttribute('href')===`#${entry.target.id}`))}})},{rootMargin:'-15% 0px -60% 0px'});document.querySelectorAll('main section[id]').forEach(section=>observer.observe(section));
 
 initAccounts(content=>{siteContent=content;items=content.menu;news=Object.fromEntries(content.news.map(item=>[item.id,item]));renderMenu(document.querySelector('.menu-tabs [aria-selected="true"]')?.dataset.category||'favorite');});
+initPixelGame();
